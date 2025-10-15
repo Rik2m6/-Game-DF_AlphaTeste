@@ -1,34 +1,48 @@
 -- Server script
 
--- Normalmente os codigos /server.luau tem a finalidade de passar uma instrução direta ao servidor;
--- Nele é aonde realizamos as chamadas de eventos, podemos configurar uma função no servidor para disparar sempre que certo evento acontecer;
+-- Normalmente os códigos com o sufixo /server.luau têm a finalidade de executar instruções diretamente no servidor.
+-- É nele que realizamos chamadas de eventos e configuramos funções no servidor que serão disparadas sempre que certo evento acontecer.
 
 local Players = game:GetService("Players")
--- game:getService vai buscar e fazer o requisito de uma das pastas que servem como pai. [pastas pai referencio as pastas pai principais, mas pode ocorrer de existir uma pasta com filhos dentro dela]
--- Normalmente usamos isso para guarda a pasta dentro de uma variavel no nosso script;
--- "players" a pasta onde fica os players, como o local e todos os outros presentes no servidor.
+-- game:GetService() obtém o acesso a um serviço principal do jogo.
+-- Esses serviços podem ser considerados as “pastas-pai” principais do ambiente, e cada uma possui suas funções específicas.
+-- Guardamos o serviço dentro de uma variável para facilitar o uso.
+-- "Players" é o serviço que contém todos os jogadores conectados ao servidor, incluindo o jogador local e os demais.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
---Mais uma vez usamos o getService;
---"ReplicatedStorage" é aonde guardamos os arquivos do nosso sistema que vamos utilizar mais tarde, arquivos esses como modulos e events. [No caso de modelos, sccript, Gui e etc, vamos armazenalos em pastas semelhantes.
+-- Mais uma vez usamos GetService.
+-- "ReplicatedStorage" é o serviço onde armazenamos arquivos que precisam ser acessados tanto pelo servidor quanto pelo cliente,
+-- como módulos, eventos, e às vezes modelos ou GUIs compartilhadas.
+-- (Modelos, scripts e GUIs específicas geralmente são armazenadas em pastas mais adequadas, como ServerStorage ou StarterGui.)
 
-local Events = ReplicatedStorage.Events
--- Na linha acima acessamos a pasta events dentro da variavel que criamos a ReplicatedStorage
+local Events = ReplicatedStorage:WaitForChild("Events")
+-- Aqui acessamos a pasta "Events" dentro do ReplicatedStorage e a armazenamos em uma variável.
+-- Usamos WaitForChild para garantir que a pasta exista antes de ser acessada.
 
-local PlayerValues = script.PlayerValues
--- Na linha acima chamo o arquivo filho do meu script e o armazeno em uma variavel.
+local PlayerValues = script:WaitForChild("PlayerValues")
+-- Aqui acessamos o objeto filho "PlayerValues" dentro do script e o armazenamos em uma variável.
 
-local function onPlayerAdded(player: Player) -- Funcão responsavel por adicionar o arquivo PlayerValues que contem CharacterValue[Uma string que armazena a classe do player]
+local function onPlayerAdded(player: Player)
+    -- Função responsável por adicionar o arquivo "PlayerValues" que contém a propriedade CharacterValue,
+    -- usada para armazenar a classe do jogador em formato de string.
 
-    local values = PlayerValues:Clone() --Não mandamos O PlayerValues diretamente para o nosso player e sim o clonamos.
-    values.Parent = player -- Passando para o server que o nosso values é parente do arquivo player[folder], assim adicionando ele diratamente lá com o nosso PlayerValues clonado.
-    
-    values.CharacterValue.Value = "Dafault" -- Especificando o nosso CharacterValue padrão.
-    Events.CharacterSelected:FireClient(player) -- Chamando o Evento e passando o nosso player para ele.
+    local values = PlayerValues:Clone()
+    -- Em vez de enviarmos o PlayerValues original, criamos uma cópia (clone) para o jogador.
+
+    values.Parent = player
+    -- Definimos o jogador como pai do clone, adicionando assim o PlayerValues clonado diretamente dentro do player.
+
+    values.CharacterValue.Value = "Default"
+    -- Definimos o valor padrão do CharacterValue.
+
+    Events.CharacterSelected:FireClient(player)
+    -- Disparamos o evento CharacterSelected para o cliente, passando o player como parâmetro.
 end
 
-Players.PlayerAdded:Connect(onPlayerAdded) --Chama a função onPlayerAdded quando o player conectar no server.
+Players.PlayerAdded:Connect(onPlayerAdded)
+-- Conectamos a função onPlayerAdded para ser executada sempre que um jogador entrar no servidor.
 
 for _, player in Players:GetPlayers() do
-    onPlayerAdded(player) -- faz uma busca pelo o player caso o programa bug e não chame o "Players.PlayerAdded:Connect(onPlayerAdded)"
+    onPlayerAdded(player)
+    -- Chamamos manualmente a função para todos os jogadores já conectados, caso o evento PlayerAdded não tenha sido disparado.
 end

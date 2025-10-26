@@ -1,0 +1,19 @@
+"Default": {
+        "Pv": 20,
+        "Df": 20,
+        "Dm": 20,
+        "Rf": 20,
+        "Rm": 20
+        },
+
+
+Pv = Pontos de vida <-- esse é o valor base de vida atribuido a uma classe. / Esse stts é responsavel por definir o estado de vivo ou morto de um player.
+ |
+ `---> player morre quando zerado. 
+
+
+Df/Dm = Dano Fisico / Dano Magico <-- Esses valores são responsaveis pelo o dano do personagem, dano fisico representa o dano base do combate melee e dano magico representa o dano de magias/ feitiçoes, armas a distancias e outras categorias provavelmente será necessario criar outros status/ No final todos os ataques vão ter um ataque fisico ou magico de base.
+
+
+Rf/Rm = Resistencia fisica / Resistencia magica <-- Valores basicos da resistencia ao dano em geral (podendo ou não abraçar outros tipos de danos).
+
